@@ -1,0 +1,113 @@
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 10px;
+}
+
+body {
+  min-width: 320px;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+}
+
+main {
+  display: block;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+ol {
+  counter-reset: ordered-list;
+  li {
+    counter-increment: ordered-list;
+    &::before {
+      content: counter(ordered-list) ".";
+    }
+  }
+}
+
+
+input,
+textarea {
+    border: none;
+    border-radius: 0;
+    font: inherit;
+    outline: none;
+    box-shadow: none;
+    border-radius: 0;
+    width: 100%;
+    background-color: transparent;
+    display: block;
+}
+
+input:not([type='checkbox']):not([type='radio']) {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+textarea {
+    resize: none;
+    box-shadow: none;
+    display: block;
+    width: 100%;
+    overflow: auto;
+}
+
+
+button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    -webkit-appearance: none;
+    font: inherit;
+    outline: none;
+    display: inline-block;
+}
+
+a {
+    background-color: transparent;
+    text-decoration: none;
+    &:link,
+    &:visited {
+        color: var(--primary-color);
+    }
+}
+
+
+svg {
+    flex-shrink: 0;
+    fill: currentColor;
+}
+
+img {
+    border-style: none;
+    max-width: 100%;
+    display: block;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+td, th {
+    text-align: left;
+    vertical-align: top;
+}

@@ -1,0 +1,308 @@
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.layout-top-panel {
+    height: 5.5rem;
+    background-color: #e3dfd4;
+    color: #69757e;
+    padding: 0 1.6rem;
+    display: flex;
+    align-items: center;
+}
+
+.menu {
+    position: relative;
+    flex-grow: 1;
+    z-index: 200;
+}
+
+.menu-btn {
+    width: 3.6rem;
+    height: 2.7rem;
+    border-radius: .2rem;
+    background-color: #6b757e;
+    position: relative;
+}
+
+
+.menu-btn-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: #e3dfd4;
+}
+
+
+
+.layout-row {
+    display: flex;
+    flex-grow: 1;
+}
+
+
+.layout-sidebar {
+    width: 24rem;
+    flex-shrink: 0;
+    background-color: #6b757e;
+    display: flex;
+    flex-direction: column;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+
+.layout-main {
+    width: 50%;
+    flex-grow: 1;
+    background-color: #edeef0;
+}
+
+
+
+.menu-list-item {
+    padding: 1rem 1.6rem;
+    font-size: 1.6rem;
+    color: white;
+    cursor: pointer;
+   
+    &.active {
+        background-color: #c3c6cb;
+        color: #6b757e;
+    }
+}
+
+.menu-close {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 7rem;
+    width: 2rem;
+    background-color: #cfd0d4;
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
+
+}
+
+.menu-close-arrow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    fill: #6b757e;
+    width: 1.6rem;
+    height: 1.6rem;
+    
+}
+
+.submenu-list {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    height: 100%;
+    width: 28rem;
+    background-color: #c3c6cb;
+    color: #6b757e;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s, visibility 0s linear .3s;
+    border-left: 1px solid #6b757e;
+}
+
+.submenu-list-item {
+  
+   padding: .8rem 1.4rem;
+   font-size: 1.4rem;
+}
+
+.menu-list-item.active > .submenu-list,
+.submenu-list-item.active > .submenu-list {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .3s, visibility .3s;
+}
+
+
+.submenu-list-item.active  {
+    background-color: #dbdce0;
+    
+}
+
+.logout-btn {
+    margin-left: auto;
+    font-size: 1.4rem;
+    line-height: 1.2;
+    color: #6b757e;
+}
+
+.logout-btn-content {
+    display: inline-flex;
+    align-items: center;
+}
+
+.logout-btn-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    flex-shrink: 0;
+    margin-right: 1rem;
+    fill: #6b757e;
+}
+
+.page {
+    padding: 2rem;
+}
+
+
+.page-heading {
+    font-size: 2.4rem;
+    margin-bottom: 2rem;
+    font-weight: 400;
+}
+
+.graph-filters {
+    display: flex;
+    align-items: center;
+}
+
+
+.graph-period {
+    display: flex;
+    align-items: center;
+    margin-right: 3rem;
+}
+
+
+.graph-period-radio-input {
+    display: none;
+}
+
+
+.graph-period-radio {
+   
+ 
+    border: 1px solid #6b757e;
+    border-left: none;
+    user-select: none;
+    cursor: pointer;
+   
+    &:first-child {
+        border-top-left-radius: .4rem;
+        border-bottom-left-radius: .4rem;
+        border-left: 1px solid #6b757e;
+    }
+
+    &:last-child {
+        border-top-right-radius: .4rem;
+        border-bottom-right-radius: .4rem;
+    }
+}
+
+
+.graph-period-radio-input {
+    display: none;
+}
+
+
+.graph-period-radio-text {
+    font-size: 1.4rem;
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: all .2s;
+    color: #6b757e;
+}
+
+
+.graph-period-radio-input:checked .graph-period-radio {
+    background-color: #6b757e;
+    color: white;
+}
+
+
+.graph-period-radio-input:checked ~ .graph-period-radio-text {
+    background-color: #6b757e;
+    color: white;
+}
+
+
+.graph-filters-dates-range {
+    background-color: #6b757e;
+    padding: 0.6rem;
+    border-radius: .4rem;
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
+    input {
+        background-color: #fff;
+        border-radius: .4rem;
+        padding: 0.4rem;
+        font-size: 1.2rem;
+       
+    }
+}
+
+
+.graph-filters-dates-range-picker {
+    margin-right: 1.5rem;
+    display: flex;
+    align-items: center;
+    
+    &:last-child {
+        margin-right: 0;
+    }
+}
+
+
+.graph-filters-dates-range-picker-label {
+    font-size: 1.2rem;
+    margin-right: .8rem;
+    color: white;
+}
+
+
+.graph-filters-dates-range-picker-wrapper {
+    width: 9rem;
+}
+
+
+.graph-filters-dates-select {
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
+    &:last-child {
+        margin-right: 0;
+    }
+}
+
+
+.graph-filters-dates-select-label {
+    margin-right: 1rem;
+    font-size: 1.4rem;
+   color: #6b757e;
+}
+
+
+.graph-filters-dates-select-wrapper {
+    min-width: 20rem;
+}
+
+
+.chart {
+    padding: 3rem 0;
+}
+
+.loader {
+    font-size: 2.4rem;
+    font-weight: 400;
+}

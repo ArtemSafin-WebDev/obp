@@ -1,0 +1,1 @@
+export const BASE_URL = 'https://obp-metrix-api.bars.group/v1'
