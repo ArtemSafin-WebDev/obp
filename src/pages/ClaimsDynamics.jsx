@@ -18,7 +18,6 @@ const detailOptions = [
   { value: "week", label: "По неделям" },
 ];
 
-
 const chartOptions = {
   // title: "Динамика обращений",
   // vAxis: { title: "Количество" },
@@ -46,14 +45,14 @@ class ClaimsDynamics extends Component {
     super(props);
     this.state = {
       period: "week",
-      startDate: moment(new Date()).subtract(1, "months").format(FORMAT),
-      endDate: moment(new Date()).format(FORMAT),
+      startDate: moment(new Date()).subtract(8, "days").format(FORMAT),
+      endDate: moment(new Date()).subtract(1, "days").format(FORMAT),
       detail: detailOptions[0],
       data: [],
       chartType: "CLAIMS",
       module: {
         value: 1,
-        label: 'Все'
+        label: "Все",
       },
       loading: false,
       error: false,
@@ -66,19 +65,73 @@ class ClaimsDynamics extends Component {
       {
         period: event.target.value,
       },
-      () => this.loadData()
+      () => {
+        if (this.state.period === "week") {
+          this.setState(
+            {
+              startDate: moment(new Date()).subtract(8, "days").format(FORMAT),
+              endDate: moment(new Date()).subtract(1, "days").format(FORMAT),
+              detail: detailOptions[0],
+            },
+            () => this.loadData()
+          );
+        } else if (this.state.period === "month") {
+          this.setState(
+            {
+              startDate: moment(new Date())
+                .subtract(1, "days")
+                .subtract(1, "months")
+                .format(FORMAT),
+              endDate: moment(new Date()).subtract(1, "days").format(FORMAT),
+              detail: detailOptions[1],
+            },
+            () => this.loadData()
+          );
+        } else {
+          this.setState(
+            {
+              detail: detailOptions[1],
+            },
+            () => this.loadData()
+          );
+        }
+      }
     );
   };
 
   handleStartDateChange = (day) => {
-    this.setState({ startDate: moment(day).format(FORMAT) }, () =>
-      this.loadData()
-    );
+    if (moment(this.state.endDate).diff(day, "days") < 0) {
+      this.setState(
+        {
+          startDate: moment(day).format(FORMAT),
+          endDate: moment(day).format(FORMAT),
+          period: "range",
+        },
+        () => this.loadData()
+      );
+    } else {
+      this.setState(
+        { startDate: moment(day).format(FORMAT), period: "range" },
+        () => this.loadData()
+      );
+    }
   };
   handleEndDateChange = (day) => {
-    this.setState({ endDate: moment(day).format(FORMAT) }, () =>
-      this.loadData()
-    );
+    if (moment(day).diff(this.state.startDate, "days") < 0) {
+      this.setState(
+        {
+          startDate: moment(day).format(FORMAT),
+          endDate: moment(day).format(FORMAT),
+          period: "range",
+        },
+        () => this.loadData()
+      );
+    } else {
+      this.setState(
+        { endDate: moment(day).format(FORMAT), period: "range" },
+        () => this.loadData()
+      );
+    }
   };
 
   handleDetalizationChange = (selectedOption) => {
@@ -92,37 +145,24 @@ class ClaimsDynamics extends Component {
     this.setState({ loading: true });
     let response;
 
-    let startDate = this.state.startDate;
-    let endDate = this.state.endDate;
-
-    if (this.state.period === "week") {
-      startDate = moment(new Date()).subtract(8, "days").format(FORMAT);
-      endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
-    } else if (this.state.period === "month") {
-      startDate = moment(new Date()).subtract(1, "days").subtract(1, "months").format(FORMAT);
-      endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
-    }
-
     try {
       response = await getClaimsDynamicsData(
         this.state.chartType,
-        startDate,
-        endDate,
+        this.state.startDate,
+        this.state.endDate,
         this.state.module.value,
         this.state.detail.value
       );
-     
+
       this.setState({
         loading: false,
         data: columnNames.concat(response.data),
         error: false,
-        errorMessage: ''
+        errorMessage: "",
       });
     } catch (err) {
       this.setState({ loading: false, error: true, errorMessage: err.message });
     }
-
-    
   };
 
   componentDidMount() {
@@ -130,13 +170,11 @@ class ClaimsDynamics extends Component {
   }
 
   render() {
-    const modules = this.props.modules.map(module => ({
+    const modules = this.props.modules.map((module) => ({
       value: module[0],
-      label: module[1]
-    }))
+      label: module[1],
+    }));
 
-
-    
     return (
       <div className="page">
         <h2 className="page-heading">Динамика обращений</h2>
@@ -194,7 +232,7 @@ class ClaimsDynamics extends Component {
                   onDayChange={this.handleStartDateChange}
                   value={this.state.startDate}
                   inputProps={{
-                    readOnly: 'readonly'
+                    readOnly: "readonly",
                   }}
                 />
               </div>
@@ -214,7 +252,7 @@ class ClaimsDynamics extends Component {
                   onDayChange={this.handleEndDateChange}
                   value={this.state.endDate}
                   inputProps={{
-                    readOnly: 'readonly'
+                    readOnly: "readonly",
                   }}
                 />
               </div>

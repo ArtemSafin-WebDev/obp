@@ -95,6 +95,7 @@ class CallsDynamics extends Component {
   };
 
   handleStartDateChange = (day) => {
+    console.log("Start date", day);
     if (this.state.period === "day") {
       this.setState(
         {
@@ -104,7 +105,7 @@ class CallsDynamics extends Component {
         () => this.loadData()
       );
     } else if (this.state.period === "week") {
-      if ((moment(this.state.endDate).diff(day, "days") > 14) && (moment(this.state.endDate).diff(day, "days") !== 0)) {
+      if (moment(this.state.endDate).diff(day, "days") > 14) {
         this.setState(
           {
             startDate: moment(day).format(FORMAT),
@@ -122,13 +123,26 @@ class CallsDynamics extends Component {
           },
           () => this.loadData()
         );
+      } else if (moment(this.state.endDate).diff(day, "days") < 0) {
+        this.setState(
+          {
+            startDate: moment(day).format(FORMAT),
+            endDate: moment(day).format(FORMAT),
+            detail: "hour",
+            period: "day",
+          },
+          () => this.loadData()
+        );
       } else {
         this.setState({ startDate: moment(day).format(FORMAT) }, () =>
           this.loadData()
         );
       }
     } else {
-      if ((moment(this.state.endDate).diff(day, "days") <= 7) && (moment(this.state.endDate).diff(day, "days") !== 0)) {
+      if (
+        moment(this.state.endDate).diff(day, "days") <= 7 &&
+        moment(this.state.endDate).diff(day, "days") !== 0
+      ) {
         this.setState(
           {
             startDate: moment(day).format(FORMAT),
@@ -141,6 +155,16 @@ class CallsDynamics extends Component {
         this.setState(
           {
             startDate: moment(day).format(FORMAT),
+            detail: "hour",
+            period: "day",
+          },
+          () => this.loadData()
+        );
+      } else if (moment(this.state.endDate).diff(day, "days") < 0) {
+        this.setState(
+          {
+            startDate: moment(day).format(FORMAT),
+            endDate: moment(day).format(FORMAT),
             detail: "hour",
             period: "day",
           },
@@ -163,7 +187,10 @@ class CallsDynamics extends Component {
         () => this.loadData()
       );
     } else if (this.state.period === "week") {
-      if ((moment(day).diff(this.state.startDate, "days") > 14) && (moment(day).diff(this.state.startDate, "days") !== 0)) {
+      if (
+        moment(day).diff(this.state.startDate, "days") > 14 &&
+        moment(day).diff(this.state.startDate, "days") !== 0
+      ) {
         this.setState(
           {
             endDate: moment(day).format(FORMAT),
@@ -181,13 +208,26 @@ class CallsDynamics extends Component {
           },
           () => this.loadData()
         );
+      } else if (moment(day).diff(this.state.startDate, "days") < 0) {
+        this.setState(
+          {
+            startDate: moment(day).format(FORMAT),
+            endDate: moment(day).format(FORMAT),
+            detail: "hour",
+            period: "day",
+          },
+          () => this.loadData()
+        );
       } else {
-        this.setState({ startDate: moment(day).format(FORMAT) }, () =>
+        this.setState({ endDate: moment(day).format(FORMAT) }, () =>
           this.loadData()
         );
       }
     } else {
-      if ((moment(day).diff(this.state.startDate, "days") <= 7) && (moment(day).diff(this.state.startDate, "days") !== 0)) {
+      if (
+        moment(day).diff(this.state.startDate, "days") <= 7 &&
+        moment(day).diff(this.state.startDate, "days") !== 0
+      ) {
         this.setState(
           {
             endDate: moment(day).format(FORMAT),
@@ -199,6 +239,16 @@ class CallsDynamics extends Component {
       } else if (moment(day).diff(this.state.startDate, "days") === 0) {
         this.setState(
           {
+            endDate: moment(day).format(FORMAT),
+            detail: "hour",
+            period: "day",
+          },
+          () => this.loadData()
+        );
+      } else if (moment(day).diff(this.state.startDate, "days") < 0) {
+        this.setState(
+          {
+            startDate: moment(day).format(FORMAT),
             endDate: moment(day).format(FORMAT),
             detail: "hour",
             period: "day",
@@ -330,7 +380,6 @@ class CallsDynamics extends Component {
                   dayPickerProps={{
                     locale: "ru",
                     localeUtils: MomentLocaleUtils,
-                   
                   }}
                   formatDate={formatDate}
                   parseDate={parseDate}
