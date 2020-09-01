@@ -24,10 +24,7 @@ const statusOptions = [
   { value: "CREATED", label: "Создано" },
 ];
 
-const moduleOptions = [
-  { value: 1, label: "Все" },
-  { value: 2, label: "Все кроме УНП" },
-];
+
 
 const chartOptions = {
   isStacked: true,
@@ -35,7 +32,7 @@ const chartOptions = {
   bar: {
     groupWidth: "20%",
   },
-  colors: ["#f4c225", "#d7874c", "#e4a232"],
+  colors: ["#d7874c", "#f4c225"],
   fontSize: 14,
   fontName: "Roboto",
   legend: {
@@ -43,7 +40,7 @@ const chartOptions = {
   },
 };
 
-const columnNames = [["Тип", "Консультация", "Инцидент"]];
+const columnNames = [["Тип", "Инцидент", "Консультация"]];
 
 const FORMAT = "YYYY-MM-DD";
 
@@ -106,7 +103,7 @@ class ClaimsDynamicsByType extends Component {
       startDate = moment(new Date()).subtract(8, "days").format(FORMAT);
       endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
     } else if (this.state.period === "month") {
-      startDate = moment(new Date()).subtract(1, "months").format(FORMAT);
+      startDate = moment(new Date()).subtract(1, "days").subtract(1, "months").format(FORMAT);
       endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
     }
     try {
@@ -122,6 +119,8 @@ class ClaimsDynamicsByType extends Component {
       this.setState({
         loading: false,
         data: columnNames.concat(response.data),
+        error: false,
+        errorMessage: ''
       });
     } catch (err) {
       this.setState({ loading: false, error: true, errorMessage: err.message });
@@ -195,7 +194,7 @@ class ClaimsDynamicsByType extends Component {
                   onDayChange={this.handleStartDateChange}
                   value={this.state.startDate}
                   inputProps={{
-                    readonly: 'readonly'
+                    readOnly: 'readonly'
                   }}
                 />
               </div>
@@ -215,7 +214,7 @@ class ClaimsDynamicsByType extends Component {
                   onDayChange={this.handleEndDateChange}
                   value={this.state.endDate}
                   inputProps={{
-                    readonly: 'readonly'
+                    readOnly: 'readonly'
                   }}
                 />
               </div>

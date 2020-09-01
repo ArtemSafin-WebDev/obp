@@ -99,7 +99,7 @@ class ClaimsDynamics extends Component {
       startDate = moment(new Date()).subtract(8, "days").format(FORMAT);
       endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
     } else if (this.state.period === "month") {
-      startDate = moment(new Date()).subtract(1, "months").format(FORMAT);
+      startDate = moment(new Date()).subtract(1, "days").subtract(1, "months").format(FORMAT);
       endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
     }
 
@@ -115,6 +115,8 @@ class ClaimsDynamics extends Component {
       this.setState({
         loading: false,
         data: columnNames.concat(response.data),
+        error: false,
+        errorMessage: ''
       });
     } catch (err) {
       this.setState({ loading: false, error: true, errorMessage: err.message });
@@ -192,7 +194,7 @@ class ClaimsDynamics extends Component {
                   onDayChange={this.handleStartDateChange}
                   value={this.state.startDate}
                   inputProps={{
-                    readonly: 'readonly'
+                    readOnly: 'readonly'
                   }}
                 />
               </div>
@@ -212,7 +214,7 @@ class ClaimsDynamics extends Component {
                   onDayChange={this.handleEndDateChange}
                   value={this.state.endDate}
                   inputProps={{
-                    readonly: 'readonly'
+                    readOnly: 'readonly'
                   }}
                 />
               </div>

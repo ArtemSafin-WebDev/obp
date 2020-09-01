@@ -10,6 +10,8 @@ import { ReactComponent as LogoutIcon } from "./icons/logout.svg";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import ClaimsDynamics from "./pages/ClaimsDynamics";
 import ClaimsDynamicsByType from "./pages/ClaimsDynamicsByType";
+import CallsDynamics from './pages/CallsDynamics';
+
 import getModules from "./api/getModules";
 
 class App extends Component {
@@ -46,6 +48,13 @@ class App extends Component {
             {
               id: uuidv4(),
               name: "Звонки",
+              submenu: [
+                {
+                  id: uuidv4(),
+                  name: "Динамика звонков",
+                  url: "/calls-dynamics",
+                }
+              ],
             },
           ],
         },
@@ -91,7 +100,7 @@ class App extends Component {
       console.error(err)
     }
 
-    console.log('Modules', response.data)
+   
 
     this.setState({
       modules: response.data
@@ -188,6 +197,9 @@ class App extends Component {
               <Switch>
                 <Route path="/claims-dynamics-by-type">
                   <ClaimsDynamicsByType modules={this.state.modules}/>
+                </Route>
+                <Route path="/calls-dynamics">
+                  <CallsDynamics/>
                 </Route>
                 <Route path="/">
                   <ClaimsDynamics modules={this.state.modules}/>
