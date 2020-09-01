@@ -19,11 +19,6 @@ const detailOptions = [
 ];
 
 
-const moduleOptions = [
-  { value: 1, label: "Все" },
-  { value: 2, label: "Все кроме УНП" },
-]
-
 const chartOptions = {
   // title: "Динамика обращений",
   // vAxis: { title: "Количество" },
@@ -36,10 +31,10 @@ const chartOptions = {
   },
   colors: ["#42bb54", "#57a8ea", "#e4a232"],
   fontSize: 14,
-  fontName: 'Roboto',
+  fontName: "Roboto",
   legend: {
-    position: 'bottom'
-  }
+    position: "bottom",
+  },
 };
 
 const columnNames = [["Дата", "Создано", "Закрыто", "Открыто"]];
@@ -55,8 +50,11 @@ class ClaimsDynamics extends Component {
       endDate: moment(new Date()).format(FORMAT),
       detail: detailOptions[0],
       data: [],
-      chartId: 101,
-      module: moduleOptions[0],
+      chartType: "CLAIMS",
+      module: {
+        value: 1,
+        label: 'Все'
+      },
       loading: false,
       error: false,
       errorMessage: "",
@@ -64,42 +62,56 @@ class ClaimsDynamics extends Component {
   }
 
   handleRadioChange = (event) => {
-    this.setState({
-      period: event.target.value,
-    });
-    this.loadData();
+    this.setState(
+      {
+        period: event.target.value,
+      },
+      () => this.loadData()
+    );
   };
 
   handleStartDateChange = (day) => {
-    this.setState({ startDate: moment(day).format(FORMAT) });
-    this.loadData();
+    this.setState({ startDate: moment(day).format(FORMAT) }, () =>
+      this.loadData()
+    );
   };
   handleEndDateChange = (day) => {
-    this.setState({ endDate: moment(day).format(FORMAT) });
-    this.loadData();
+    this.setState({ endDate: moment(day).format(FORMAT) }, () =>
+      this.loadData()
+    );
   };
 
   handleDetalizationChange = (selectedOption) => {
-    this.setState({ detail: selectedOption });
-    this.loadData();
+    this.setState({ detail: selectedOption }, () => this.loadData());
   };
   handleModuleChange = (selectedOption) => {
-    this.setState({ module: selectedOption });
-    this.loadData();
+    this.setState({ module: selectedOption }, () => this.loadData());
   };
 
   loadData = async () => {
     this.setState({ loading: true });
     let response;
+
+    let startDate = this.state.startDate;
+    let endDate = this.state.endDate;
+
+    if (this.state.period === "week") {
+      startDate = moment(new Date()).subtract(8, "days").format(FORMAT);
+      endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
+    } else if (this.state.period === "month") {
+      startDate = moment(new Date()).subtract(1, "months").format(FORMAT);
+      endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
+    }
+
     try {
       response = await getClaimsDynamicsData(
-        this.state.chartId,
-        this.state.startDate,
-        this.state.endDate,
+        this.state.chartType,
+        startDate,
+        endDate,
         this.state.module.value,
         this.state.detail.value
       );
-      console.log("Response", response);
+     
       this.setState({
         loading: false,
         data: columnNames.concat(response.data),
@@ -107,6 +119,8 @@ class ClaimsDynamics extends Component {
     } catch (err) {
       this.setState({ loading: false, error: true, errorMessage: err.message });
     }
+
+    
   };
 
   componentDidMount() {
@@ -114,6 +128,13 @@ class ClaimsDynamics extends Component {
   }
 
   render() {
+    const modules = this.props.modules.map(module => ({
+      value: module[0],
+      label: module[1]
+    }))
+
+
+    
     return (
       <div className="page">
         <h2 className="page-heading">Динамика обращений</h2>
@@ -170,6 +191,9 @@ class ClaimsDynamics extends Component {
                   placeholder={FORMAT}
                   onDayChange={this.handleStartDateChange}
                   value={this.state.startDate}
+                  inputProps={{
+                    readonly: 'readonly'
+                  }}
                 />
               </div>
             </div>
@@ -187,14 +211,15 @@ class ClaimsDynamics extends Component {
                   placeholder={FORMAT}
                   onDayChange={this.handleEndDateChange}
                   value={this.state.endDate}
+                  inputProps={{
+                    readonly: 'readonly'
+                  }}
                 />
               </div>
             </div>
           </div>
           <div className="graph-filters-dates-select">
-            <div className="graph-filters-dates-select-label">
-              Детализация
-            </div>
+            <div className="graph-filters-dates-select-label">Детализация</div>
             <div className="graph-filters-dates-select-wrapper">
               <Select
                 value={this.state.detail}
@@ -204,19 +229,15 @@ class ClaimsDynamics extends Component {
             </div>
           </div>
           <div className="graph-filters-dates-select">
-            <div className="graph-filters-dates-select-label">
-              Модуль
-            </div>
+            <div className="graph-filters-dates-select-label">Модуль</div>
             <div className="graph-filters-dates-select-wrapper">
               <Select
                 value={this.state.module}
                 onChange={this.handleModuleChange}
-                options={moduleOptions}
+                options={modules}
               />
             </div>
           </div>
-          
-
         </form>
 
         <div className="chart">

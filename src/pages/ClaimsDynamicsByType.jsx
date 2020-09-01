@@ -19,9 +19,9 @@ const detailOptions = [
 ];
 
 const statusOptions = [
-  { value: 0, label: "Открыто" },
-  { value: 5, label: "Закрыто" },
-  { value: 10, label: "Создано" },
+  { value: "OPENED", label: "Открыто" },
+  { value: "CLOSED", label: "Закрыто" },
+  { value: "CREATED", label: "Создано" },
 ];
 
 const moduleOptions = [
@@ -56,8 +56,8 @@ class ClaimsDynamicsByType extends Component {
       endDate: moment(new Date()).format(FORMAT),
       detail: detailOptions[0],
       data: [],
-      chartId: 102,
-      module: moduleOptions[0],
+      chartType: "CLAIMS_BY_TYPE",
+      module: { value: 1, label: "Все" },
       loading: false,
       error: false,
       errorMessage: "",
@@ -66,42 +66,54 @@ class ClaimsDynamicsByType extends Component {
   }
 
   handleRadioChange = (event) => {
-    this.setState({
-      period: event.target.value,
-    });
-    this.loadData();
+    this.setState(
+      {
+        period: event.target.value,
+      },
+      () => this.loadData()
+    );
   };
 
   handleStartDateChange = (day) => {
-    this.setState({ startDate: moment(day).format(FORMAT) });
-    this.loadData();
+    this.setState({ startDate: moment(day).format(FORMAT) }, () =>
+      this.loadData()
+    );
   };
   handleEndDateChange = (day) => {
-    this.setState({ endDate: moment(day).format(FORMAT) });
-    this.loadData();
+    this.setState({ endDate: moment(day).format(FORMAT) }, () =>
+      this.loadData()
+    );
   };
 
   handleDetalizationChange = (selectedOption) => {
-    this.setState({ detail: selectedOption });
-    this.loadData();
+    this.setState({ detail: selectedOption }, () => this.loadData());
   };
   handleModuleChange = (selectedOption) => {
-    this.setState({ module: selectedOption });
-    this.loadData();
+    this.setState({ module: selectedOption }, () => this.loadData());
   };
   handleStatusChange = (selectedOption) => {
-    this.setState({ status: selectedOption });
-    this.loadData();
+    this.setState({ status: selectedOption }, () => this.loadData());
   };
 
   loadData = async () => {
     this.setState({ loading: true });
     let response;
+
+    let startDate = this.state.startDate;
+    let endDate = this.state.endDate;
+
+    if (this.state.period === "week") {
+      startDate = moment(new Date()).subtract(8, "days").format(FORMAT);
+      endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
+    } else if (this.state.period === "month") {
+      startDate = moment(new Date()).subtract(1, "months").format(FORMAT);
+      endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
+    }
     try {
       response = await getClaimsDynamicsByTypeData(
-        this.state.chartId,
-        this.state.startDate,
-        this.state.endDate,
+        this.state.chartType,
+        startDate,
+        endDate,
         this.state.module.value,
         this.state.detail.value,
         this.state.status.value
@@ -121,6 +133,11 @@ class ClaimsDynamicsByType extends Component {
   }
 
   render() {
+    const modules = this.props.modules.map((module) => ({
+      value: module[0],
+      label: module[1],
+    }));
+
     return (
       <div className="page">
         <h2 className="page-heading">Динамика обращений по типу</h2>
@@ -177,6 +194,9 @@ class ClaimsDynamicsByType extends Component {
                   placeholder={FORMAT}
                   onDayChange={this.handleStartDateChange}
                   value={this.state.startDate}
+                  inputProps={{
+                    readonly: 'readonly'
+                  }}
                 />
               </div>
             </div>
@@ -194,6 +214,9 @@ class ClaimsDynamicsByType extends Component {
                   placeholder={FORMAT}
                   onDayChange={this.handleEndDateChange}
                   value={this.state.endDate}
+                  inputProps={{
+                    readonly: 'readonly'
+                  }}
                 />
               </div>
             </div>
@@ -224,7 +247,7 @@ class ClaimsDynamicsByType extends Component {
               <Select
                 value={this.state.module}
                 onChange={this.handleModuleChange}
-                options={moduleOptions}
+                options={modules}
               />
             </div>
           </div>

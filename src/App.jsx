@@ -10,6 +10,7 @@ import { ReactComponent as LogoutIcon } from "./icons/logout.svg";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import ClaimsDynamics from "./pages/ClaimsDynamics";
 import ClaimsDynamicsByType from "./pages/ClaimsDynamicsByType";
+import getModules from "./api/getModules";
 
 class App extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class App extends Component {
     this.state = {
       activeMenuId: null,
       activeSubmenuId: null,
-
+      modules: [],
       menuShown: true,
       menuItems: [
         {
@@ -80,6 +81,22 @@ class App extends Component {
       menuShown: true,
     });
   };
+
+  async componentDidMount() {
+    let response = [];
+
+    try {
+      response = await getModules();
+    } catch(err) {
+      console.error(err)
+    }
+
+    console.log('Modules', response.data)
+
+    this.setState({
+      modules: response.data
+    })
+  }
 
   render() {
     return (
@@ -170,10 +187,10 @@ class App extends Component {
             <div className="layout-main">
               <Switch>
                 <Route path="/claims-dynamics-by-type">
-                  <ClaimsDynamicsByType/>
+                  <ClaimsDynamicsByType modules={this.state.modules}/>
                 </Route>
                 <Route path="/">
-                  <ClaimsDynamics/>
+                  <ClaimsDynamics modules={this.state.modules}/>
                 </Route>
               </Switch>
             </div>
