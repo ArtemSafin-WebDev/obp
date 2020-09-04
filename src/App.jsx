@@ -91,6 +91,15 @@ class App extends Component {
     });
   };
 
+
+  handleMenu = () => {
+    if (this.state.menuShown) {
+      this.hideMenu();
+    } else {
+      this.showMenu();
+    }
+  }
+
   async componentDidMount() {
     let response = [];
 
@@ -112,7 +121,7 @@ class App extends Component {
       <Router>
         <div className="app">
           <div className="layout-top-panel">
-            <button className="menu-btn" onClick={() => this.showMenu()}>
+            <button className="menu-btn" onClick={() => this.handleMenu()}>
               <MenuBurger className="menu-btn-icon" />
             </button>
             <button className="logout-btn">
@@ -188,7 +197,7 @@ class App extends Component {
                     </li>
                   ))}
                 </ul>
-                <button className="menu-close" onClick={() => this.hideMenu()}>
+                <button className="menu-close" onClick={() => this.handleMenu()}>
                   <LeftArrow className="menu-close-arrow" />
                 </button>
               </nav>

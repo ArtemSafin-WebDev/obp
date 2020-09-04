@@ -36,6 +36,7 @@ const chartOptions = {
   legend: {
     position: "bottom",
   },
+  curveType: 'function',
 };
 
 const columnNames = [["Тип", "Инцидент", "Консультация"]];

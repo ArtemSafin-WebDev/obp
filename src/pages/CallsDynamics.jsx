@@ -26,6 +26,7 @@ const chartOptions = {
   legend: {
     position: "bottom",
   },
+  curveType: 'function',
 };
 
 const columnNames = [["Дата", "Пропущено", "Принято"]];
