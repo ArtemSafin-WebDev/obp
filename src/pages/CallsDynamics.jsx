@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import moment from "moment";
-
+import { ReactComponent as Download } from "../icons/download.svg";
 import { Chart } from "react-google-charts";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import "react-day-picker/lib/style.css";
@@ -13,6 +13,7 @@ import MomentLocaleUtils, {
 import "moment/locale/ru";
 
 import getCalls from "../api/getCalls";
+import TableView from "../components/TableView";
 
 const chartOptions = {
   isStacked: true,
@@ -26,16 +27,18 @@ const chartOptions = {
   legend: {
     position: "bottom",
   },
-  curveType: 'function',
+  curveType: "function",
+  animation: {
+    duration: 1000,
+    easing: "out",
+    startup: true,
+  },
 };
 
 const columnNames = [["Дата", "Пропущено", "Принято"]];
 
-const FORMAT = "YYYY-MM-DD";
-
-// const firstDate = moment(new Date()).subtract(8, "days").format(FORMAT);
-// const secondDate = moment(new Date()).subtract(1, "days").format(FORMAT)
-// console.log('Test difference between dates', moment(secondDate).diff(firstDate, 'days'))
+const FORMAT = "DD-MM-YYYY";
+const OUTPUT_FORMAT = "YYYY-MM-DD";
 
 class CallsDynamics extends Component {
   constructor(props) {
@@ -278,15 +281,18 @@ class CallsDynamics extends Component {
     this.setState({ loading: true });
     let response;
 
-    let startDate = this.state.startDate;
-    let endDate = this.state.endDate;
+    let startDate = moment(this.state.startDate, FORMAT).format(OUTPUT_FORMAT);
+    let endDate = moment(this.state.endDate, FORMAT).format(OUTPUT_FORMAT);
 
     if (this.state.period === "week") {
-      startDate = moment(new Date()).subtract(8, "days").format(FORMAT);
-      endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
-    } else if (this.state.period === "month") {
-      startDate = moment(new Date()).subtract(1, "months").format(FORMAT);
-      endDate = moment(new Date()).subtract(1, "days").format(FORMAT);
+      startDate = moment(new Date()).subtract(8, "days").format(OUTPUT_FORMAT);
+      endDate = moment(new Date()).subtract(1, "days").format(OUTPUT_FORMAT);
+    } else if (this.state.period === "range") {
+      startDate = moment(new Date())
+        .subtract(1, "days")
+        .subtract(1, "months")
+        .format(OUTPUT_FORMAT);
+      endDate = moment(new Date()).subtract(1, "days").format(OUTPUT_FORMAT);
     }
     try {
       response = await getCalls(
@@ -296,14 +302,36 @@ class CallsDynamics extends Component {
         this.state.detail
       );
       console.log("Response", response);
-      this.setState({
-        loading: false,
-        data: columnNames.concat(response.data),
-        error: false,
-        errorMessage: "",
+
+      this.setState((state) => {
+        if (state.period !== "day") {
+          const formattedData = [...response.data];
+
+          formattedData.forEach(
+            (item) => (item[0] = moment(item[0]).format(FORMAT))
+          );
+          this.setState({
+            loading: false,
+            data: columnNames.concat(formattedData),
+            error: false,
+            errorMessage: "",
+          });
+        } else {
+          this.setState({
+            loading: false,
+            data: columnNames.concat(response.data),
+            error: false,
+            errorMessage: "",
+          });
+        }
       });
     } catch (err) {
-      this.setState({ loading: false, error: true, errorMessage: err.message });
+      this.setState({
+        loading: false,
+        error: true,
+        errorMessage:
+          "Не удается получить данные, обратитесь в службу техподдержки",
+      });
     }
   };
 
@@ -395,6 +423,10 @@ class CallsDynamics extends Component {
               </div>
             </div>
           </div>
+
+          <a href="#" download className="graph-filters-download">
+            <Download className="graph-filters-download-icon" />
+          </a>
         </form>
 
         <div className="chart">
@@ -410,14 +442,18 @@ class CallsDynamics extends Component {
 
           <div className="chart-container">
             {!this.state.loading && !this.state.error && (
-              <Chart
-                width={"100%"}
-                height={"700px"}
-                chartType="ColumnChart"
-                loader={<div className="loader">Загрузка графика...</div>}
-                data={this.state.data}
-                options={chartOptions}
-              />
+              <>
+                <Chart
+                  width={"100%"}
+                  height={"700px"}
+                  chartType="ColumnChart"
+                  loader={<div className="loader">Загрузка графика...</div>}
+                  data={this.state.data}
+                  options={chartOptions}
+                  legendToggle
+                />
+                <TableView data={this.state.data} />
+              </>
             )}
           </div>
         </div>

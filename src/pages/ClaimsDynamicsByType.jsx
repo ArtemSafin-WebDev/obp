@@ -4,7 +4,7 @@ import Select from "react-select";
 import { Chart } from "react-google-charts";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import "react-day-picker/lib/style.css";
-
+import { ReactComponent as Download } from "../icons/download.svg";
 import MomentLocaleUtils, {
   formatDate,
   parseDate,
@@ -12,6 +12,7 @@ import MomentLocaleUtils, {
 
 import "moment/locale/ru";
 import getClaimsDynamicsByTypeData from "../api/getClaimsDynamicsByType";
+import TableView from "../components/TableView";
 
 const detailOptions = [
   { value: "day", label: "По дням" },
@@ -36,12 +37,18 @@ const chartOptions = {
   legend: {
     position: "bottom",
   },
-  curveType: 'function',
+  curveType: "function",
+  animation: {
+    duration: 1000,
+    easing: "out",
+    startup: true,
+  },
 };
 
-const columnNames = [["Тип", "Инцидент", "Консультация"]];
+const columnNames = [["Дата", "Инцидент", "Консультация"]];
 
-const FORMAT = "YYYY-MM-DD";
+const FORMAT = "DD-MM-YYYY";
+const OUTPUT_FORMAT = "YYYY-MM-DD";
 
 class ClaimsDynamicsByType extends Component {
   constructor(props) {
@@ -152,21 +159,54 @@ class ClaimsDynamicsByType extends Component {
     try {
       response = await getClaimsDynamicsByTypeData(
         this.state.chartType,
-        this.state.startDate,
-        this.state.endDate,
+        moment(this.state.startDate, FORMAT).format(OUTPUT_FORMAT),
+        moment(this.state.endDate, FORMAT).format(OUTPUT_FORMAT),
         this.state.module.value,
         this.state.detail.value,
         this.state.status.value
       );
       console.log("Response", response);
+
+      if (this.state.detail.value === "day") {
+        const formattedData = [...response.data];
+
+        formattedData.forEach(
+          (item) => (item[0] = moment(item[0]).format(FORMAT))
+        );
+
+        this.setState({
+          loading: false,
+          data: columnNames.concat(formattedData),
+          error: false,
+          errorMessage: "",
+        });
+      } else {
+        const formattedData = [...response.data];
+
+        formattedData.forEach((item) => {
+          const date = item[0].split("-");
+          const firstPart = moment(date[0]).format("D MMM");
+          const secondPart = moment(date[1]).format("D MMM");
+          console.log("First part", firstPart);
+          console.log("Second part", secondPart);
+
+          item[0] = [firstPart, secondPart].join("-");
+        });
+
+        this.setState({
+          loading: false,
+          data: columnNames.concat(formattedData),
+          error: false,
+          errorMessage: "",
+        });
+      }
+    } catch (err) {
       this.setState({
         loading: false,
-        data: columnNames.concat(response.data),
-        error: false,
-        errorMessage: "",
+        error: true,
+        errorMessage:
+          "Не удается получить данные, обратитесь в службу техподдержки",
       });
-    } catch (err) {
-      this.setState({ loading: false, error: true, errorMessage: err.message });
     }
   };
 
@@ -293,6 +333,9 @@ class ClaimsDynamicsByType extends Component {
               />
             </div>
           </div>
+          <a href="#" download className="graph-filters-download">
+            <Download className="graph-filters-download-icon" />
+          </a>
         </form>
 
         <div className="chart">
@@ -308,14 +351,18 @@ class ClaimsDynamicsByType extends Component {
 
           <div className="chart-container">
             {!this.state.loading && !this.state.error && (
-              <Chart
-                width={"100%"}
-                height={"700px"}
-                chartType="ColumnChart"
-                loader={<div className="loader">Загрузка графика...</div>}
-                data={this.state.data}
-                options={chartOptions}
-              />
+              <>
+                <Chart
+                  width={"100%"}
+                  height={"700px"}
+                  chartType="ColumnChart"
+                  loader={<div className="loader">Загрузка графика...</div>}
+                  data={this.state.data}
+                  options={chartOptions}
+                  legendToggle
+                />
+                <TableView data={this.state.data} colors={["#fff", "#d7874c", "#f4c225"]}/>
+              </>
             )}
           </div>
         </div>

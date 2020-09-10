@@ -1,0 +1,23 @@
+.table-view {
+    margin-top: 3rem;
+    padding-left: 24rem;
+    padding-right: 24rem;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+.table-view-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+.table-view-table-data {
+    background-color: #fff;
+    padding: .8rem;
+    border: 1px solid lightgrey;
+    font-size: 1.2rem;
+    text-align: left;
+    vertical-align: top;
+}
