@@ -74,7 +74,7 @@
   transition: background-color 0.2s, color 0.2s;
 
   &.hidden {
-      display: none;
+    display: none;
   }
 
   &:hover {
@@ -145,7 +145,6 @@
   height: 1.6rem;
 }
 
-
 .graph-filters-download {
   margin-left: auto;
   width: 2rem;
@@ -155,9 +154,8 @@
   align-items: center;
   justify-items: center;
   background-color: #6b757e;
-  border-radius: .2rem;
+  border-radius: 0.2rem;
 }
-
 
 .graph-filters-download-icon {
   width: 80%;
@@ -373,4 +371,55 @@
 .loader {
   font-size: 2.4rem;
   font-weight: 400;
+}
+
+.page-metrics-list-controls {
+  display: flex;
+  align-items: center;
+  margin-right: 3rem;
+  margin-bottom: 2rem;
+}
+
+.page-metrics-list-controls-item {
+  border: 1px solid #6b757e;
+  border-left: none;
+
+  user-select: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  padding: 0.8rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: all 0.2s;
+  color: #6b757e;
+
+  &:link,
+  &:visited {
+    color: #6b757e;
+  }
+
+  &:first-child {
+    border-top-left-radius: 0.4rem;
+    border-bottom-left-radius: 0.4rem;
+    border-left: 1px solid #6b757e;
+  }
+
+  &:last-child {
+    border-top-right-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+  }
+
+
+  &:hover {
+    background-color:  #6b757e;
+    color: white;
+  }
+  a {
+    &:link,
+    &:visited {
+      color: inherit;
+    }
+  }
 }

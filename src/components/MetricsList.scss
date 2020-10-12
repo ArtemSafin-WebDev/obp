@@ -1,0 +1,35 @@
+.metrics-list {
+    max-width: 80rem;
+}
+
+
+.metrics-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+   
+  
+
+    td, th {
+        text-align: left;
+        
+        font-weight: 400;
+        border: 1px solid #6b757e;
+        font-size: 1.4rem;
+        padding: 0.8rem 1.2rem;
+        color: #6b757e;
+        vertical-align: middle;
+    }
+
+
+    th {
+        font-weight: 500;
+        color: black;
+    }
+
+    td {
+        &:last-child {
+            text-align: center;
+        }
+    }
+}

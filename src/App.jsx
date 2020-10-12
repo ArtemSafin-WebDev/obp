@@ -1,18 +1,23 @@
 import React, { Component } from "react";
 import "./App.scss";
 
-
-
 import { ReactComponent as MenuBurger } from "./icons/menu.svg";
 import { ReactComponent as LeftArrow } from "./icons/left-arrow.svg";
 import { ReactComponent as LogoutIcon } from "./icons/logout.svg";
 
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+} from "react-router-dom";
 import ClaimsDynamics from "./pages/ClaimsDynamics";
 import ClaimsDynamicsByType from "./pages/ClaimsDynamicsByType";
 import CallsDynamics from "./pages/CallsDynamics";
 
 import getModules from "./api/getModules";
+import MetricsHandbook from "./pages/MetricsHandbook";
 
 class App extends Component {
   constructor(props) {
@@ -70,7 +75,33 @@ class App extends Component {
         {
           name: "Метрики",
           filterTerm: "",
-          items: [],
+          items: [
+            {
+              name: "Количественные показатели",
+              items: [],
+            },
+            {
+              name: "Временные показатели",
+              items: [],
+            },
+            {
+              name: "Метрики",
+              items: [],
+            },
+            {
+              name: "Настройки",
+              items: [
+                {
+                  name: "Справочник показателей / метрик",
+                  url: "/metrics-handbook",
+                },
+                {
+                  name: "Настройка базовых значений показателей / метрик",
+                  url: "/metrics-setup",
+                },
+              ],
+            },
+          ],
         },
       ],
     };
@@ -217,12 +248,15 @@ class App extends Component {
                 <Route path="/calls-dynamics">
                   <CallsDynamics />
                 </Route>
-               
+                <Route
+                  path="/metrics-handbook"
+                  render={(props) => <MetricsHandbook {...props} />}
+                ></Route>
 
                 <Route
                   path="/"
                   render={() => {
-                    return <Redirect to="/claims-dynamics"/>
+                    return <Redirect to="/claims-dynamics" />;
                   }}
                 />
               </Switch>
